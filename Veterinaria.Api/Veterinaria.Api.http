@@ -1,0 +1,178 @@
+@host = http://localhost:5213
+
+### Propietarios
+# 200: lista ordenada por nombres
+GET {{host}}/api/propietarios
+
+###
+# 200: búsqueda por nombre o DNI
+GET {{host}}/api/propietarios?buscar=rojas
+
+###
+# 200: con la cantidad de mascotas
+GET {{host}}/api/propietarios/1
+
+###
+# 404: no existe
+GET {{host}}/api/propietarios/999
+
+###
+# 200: mascotas del propietario
+GET {{host}}/api/propietarios/1/mascotas
+
+###
+# 200: propietario sin mascotas
+GET {{host}}/api/propietarios/5/mascotas
+
+###
+# 404: el propietario no existe
+GET {{host}}/api/propietarios/999/mascotas
+
+###
+# 201: nuevo propietario
+POST {{host}}/api/propietarios
+Content-Type: application/json
+
+{ "nombres": "Carmen Rosa Vílchez Ramos", "dni": "45129673", "telefono": "965412378", "correo": "carmen.vilchez@gmail.com" }
+
+###
+# 400: datos inválidos
+POST {{host}}/api/propietarios
+Content-Type: application/json
+
+{ "nombres": "", "dni": "123", "telefono": "12345", "correo": "carmen.gmail.com" }
+
+###
+# 409: DNI repetido
+POST {{host}}/api/propietarios
+Content-Type: application/json
+
+{ "nombres": "Ana Paredes", "dni": "46281937", "telefono": null, "correo": null }
+
+###
+# 204: actualizar teléfono y correo
+PUT {{host}}/api/propietarios/6
+Content-Type: application/json
+
+{ "nombres": "Carmen Rosa Vílchez Ramos", "telefono": "965412300", "correo": "carmenrosa.vilchez@gmail.com" }
+
+###
+# 200: se guardó el cambio
+GET {{host}}/api/propietarios/6
+
+###
+# 404: no existe
+PUT {{host}}/api/propietarios/999
+Content-Type: application/json
+
+{ "nombres": "Carmen Rosa Vílchez Ramos", "telefono": "965412300", "correo": "carmenrosa.vilchez@gmail.com" }
+
+###
+# 400: nombres vacío
+PUT {{host}}/api/propietarios/6
+Content-Type: application/json
+
+{ "nombres": "", "telefono": "965412300", "correo": null }
+
+###
+# 409: tiene mascotas registradas
+DELETE {{host}}/api/propietarios/1
+
+### Mascotas
+# 200: todas las mascotas
+GET {{host}}/api/mascotas
+
+###
+# 200: filtro por especie
+GET {{host}}/api/mascotas?especie=Perro
+
+###
+# 200: especie, propietario y búsqueda
+GET {{host}}/api/mascotas?especie=Gato&propietarioId=2&buscar=pe
+
+###
+# 200: con el nombre del propietario
+GET {{host}}/api/mascotas/1
+
+###
+# 404: no existe
+GET {{host}}/api/mascotas/999
+
+###
+# 201: nueva mascota
+POST {{host}}/api/mascotas
+Content-Type: application/json
+
+{ "nombre": "Max", "especie": "Perro", "raza": "Labrador", "fechaNacimiento": "2024-08-03", "peso": 12.5, "propietarioId": 6 }
+
+###
+# 400: datos inválidos
+POST {{host}}/api/mascotas
+Content-Type: application/json
+
+{ "nombre": "", "especie": "", "peso": 0, "propietarioId": 0 }
+
+###
+# 400: el propietario no existe
+POST {{host}}/api/mascotas
+Content-Type: application/json
+
+{ "nombre": "Bobby", "especie": "Perro", "raza": null, "fechaNacimiento": "2023-05-10", "peso": 9.5, "propietarioId": 999 }
+
+###
+# 400: fecha de nacimiento futura
+POST {{host}}/api/mascotas
+Content-Type: application/json
+
+{ "nombre": "Bobby", "especie": "Perro", "raza": null, "fechaNacimiento": "2027-01-15", "peso": 9.5, "propietarioId": 5 }
+
+###
+# 409: nombre repetido para el mismo propietario
+POST {{host}}/api/mascotas
+Content-Type: application/json
+
+{ "nombre": "Firulais", "especie": "Perro", "raza": "Mestizo", "fechaNacimiento": "2024-02-01", "peso": 10, "propietarioId": 1 }
+
+###
+# 204: actualizar peso
+PUT {{host}}/api/mascotas/9
+Content-Type: application/json
+
+{ "nombre": "Max", "especie": "Perro", "raza": "Labrador", "fechaNacimiento": "2024-08-03", "peso": 14.2 }
+
+###
+# 400: fecha de nacimiento futura
+PUT {{host}}/api/mascotas/9
+Content-Type: application/json
+
+{ "nombre": "Max", "especie": "Perro", "raza": "Labrador", "fechaNacimiento": "2027-03-01", "peso": 14.2 }
+
+###
+# 409: el propietario ya tiene una mascota con ese nombre
+PUT {{host}}/api/mascotas/2
+Content-Type: application/json
+
+{ "nombre": "Firulais", "especie": "Gato", "raza": "Siamés", "fechaNacimiento": "2021-07-02", "peso": 4.2 }
+
+###
+# 404: no existe
+PUT {{host}}/api/mascotas/999
+Content-Type: application/json
+
+{ "nombre": "Max", "especie": "Perro", "raza": "Labrador", "fechaNacimiento": "2024-08-03", "peso": 14.2 }
+
+###
+# 204: eliminar
+DELETE {{host}}/api/mascotas/9
+
+###
+# 404: no existe
+DELETE {{host}}/api/mascotas/999
+
+### Eliminar propietario
+# 204: ya no tiene mascotas
+DELETE {{host}}/api/propietarios/6
+
+###
+# 404: no existe
+DELETE {{host}}/api/propietarios/999
